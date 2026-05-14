@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم إعادة هيكلة اللجان</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0a0e27;
+            color: #4a9eff;
+            font-family: 'Segoe UI', 'Arial Unicode MS', Tahoma, sans-serif;
+            padding: 30px 20px;
+            direction: rtl;
+            text-align: right;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            border-bottom: 4px solid #4a9eff;
+            padding-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            color: #4a9eff;
+            margin-bottom: 10px;
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(74, 158, 255, 0.2);
+        }
+
+        .header p {
+            color: #7ab8ff;
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+
+        .header .subtitle {
+            color: #5a7a9f;
+            font-size: 0.95em;
+        }
+
+        /* Navigation Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 40px;
+            flex-direction: row-reverse;
+            flex-wrap: wrap;
+            border-bottom: 3px solid #1e2749;
+        }
+
+        .tab-btn {
+            background-color: #0f1535;
+            color: #7ab8ff;
+            border: 2px solid #2a4a7a;
+            padding: 14px 24px;
+            cursor: pointer;
+            border-radius: 8px 8px 0 0;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab-btn:hover {
+            background-color: #1a2555;
+            color: #4a9eff;
+            border-color: #4a9eff;
+            transform: translateY(-3px);
+        }
+
+        .tab-btn.active {
+            background-color: #1a3a5a;
+            color: #4a9eff;
+            border-color: #4a9eff;
+            border-bottom: 3px solid #1a3a5a;
+            box-shadow: 0 -5px 15px rgba(74, 158, 255, 0.1);
+        }
+
+        .tab-content {
+            display: none;
+            animation: slideIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #0f1535 0%, #1a2555 100%);
+            border: 2px solid #2a4a7a;
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #4a9eff, #00d4aa);
+        }
+
+        .metric-card:hover {
+            border-color: #4a9eff;
+            background: linear-gradient(135deg, #1a2555 0%, #1a3a5a 100%);
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px rgba(74, 158, 255, 0.15);
+        }
+
+        .metric-label {
+            color: #7ab8ff;
+            font-size: 0.95em;
+            margin-bottom: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-value {
+            color: #4a9eff;
+            font-size: 2.8em;
+            font-weight: 800;
+            margin-bottom: 8px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .metric-change {
+            color: #00d4aa;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        /* Table Styles */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #0f1535;
+            border: 2px solid #2a4a7a;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .comparison-table thead {
+            background: linear-gradient(90deg, #1a2555 0%, #1a3a5a 100%);
+            border-bottom: 3px solid #4a9eff;
+        }
+
+        .comparison-table th {
+            color: #4a9eff;
+            padding: 20px;
+            text-align: right;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.95em;
+            letter-spacing: 0.5px;
+            border-left: 1px solid #2a4a7a;
+        }
+
+        .comparison-table td {
+            color: #7ab8ff;
+            padding: 16px 20px;
+            border-bottom: 1px solid #1e2749;
+            border-left: 1px solid #2a4a7a;
+            font-size: 0.95em;
+        }
+
+        .comparison-table tbody tr:hover {
+            background-color: #1a2555;
+        }
+
+        .comparison-table tbody tr:nth-child(even) {
+            background-color: #0a0e27;
+        }
+
+        .current {
+            color: #ff6b6b;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+        }
+
+        .proposed {
+            color: #00d4aa;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+        }
+
+        .improvement {
+            color: #4a9eff;
+            font-weight: 700;
+        }
+
+        /* Council Cards */
+        .councils-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .council-card {
+            background: linear-gradient(135deg, #0f1535 0%, #1a2555 100%);
+            border: 2px solid #2a4a7a;
+            border-radius: 12px;
+            padding: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .council-card:hover {
+            border-color: #4a9eff;
+            background: linear-gradient(135deg, #1a2555 0%, #1a3a5a 100%);
+            transform: translateY(-6px);
+            box-shadow: 0 8px 20px rgba(74, 158, 255, 0.15);
+        }
+
+        .council-card-header {
+            background: linear-gradient(90deg, #2a4a7a 0%, #1a3a5a 100%);
+            padding: 20px;
+            border-bottom: 3px solid #4a9eff;
+        }
+
+        .council-title {
+            color: #4a9eff;
+            font-size: 1.3em;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .council-card-body {
+            padding: 20px;
+        }
+
+        .council-committees {
+            color: #7ab8ff;
+            font-size: 0.95em;
+            line-height: 1.8;
+        }
+
+        .committee-item {
+            background-color: #1a3a5a;
+            padding: 12px 15px;
+            margin: 8px 0;
+            border-right: 4px solid #4a9eff;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .committee-item:hover {
+            background-color: #2a4a7a;
+            padding-left: 20px;
+        }
+
+        /* Timeline */
+        .timeline {
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 25px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            right: 50%;
+            transform: translateX(50%);
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, #4a9eff 0%, #00d4aa 100%);
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 25px;
+            padding: 25px;
+            background: linear-gradient(135deg, #0f1535 0%, #1a2555 100%);
+            border: 2px solid #2a4a7a;
+            border-radius: 12px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item:hover {
+            border-color: #4a9eff;
+            background: linear-gradient(135deg, #1a2555 0%, #1a3a5a 100%);
+            transform: translateX(-8px);
+            box-shadow: 0 6px 18px rgba(74, 158, 255, 0.1);
+        }
+
+        .timeline-marker {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #4a9eff, #2a7a9f);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0a0e27;
+            font-weight: 800;
+            font-size: 1.5em;
+            flex-shrink: 0;
+            box-shadow: 0 0 20px rgba(74, 158, 255, 0.3);
+        }
+
+        .timeline-content {
+            flex: 1;
+            padding-top: 5px;
+        }
+
+        .timeline-title {
+            color: #4a9eff;
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .timeline-description {
+            color: #7ab8ff;
+            font-size: 0.95em;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .timeline-outputs {
+            color: #00d4aa;
+            font-size: 0.9em;
+            padding: 12px;
+            background-color: rgba(0, 212, 170, 0.1);
+            border-right: 3px solid #00d4aa;
+            margin-top: 12px;
+            border-radius: 6px;
+            line-height: 1.7;
+        }
+
+        /* Highlight Box */
+        .highlight {
+            background: linear-gradient(135deg, #1a3a5a 0%, #0f1535 100%);
+            color: #4a9eff;
+            padding: 25px;
+            border-right: 5px solid #4a9eff;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            font-weight: 600;
+            line-height: 1.8;
+            font-size: 1.05em;
+            box-shadow: 0 4px 12px rgba(74, 158, 255, 0.1);
+        }
+
+        /* Button Group */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 40px;
+            flex-wrap: wrap;
+            flex-direction: row-reverse;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border: 2px solid #4a9eff;
+            background-color: #0f1535;
+            color: #4a9eff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            background-color: #4a9eff;
+            color: #0a0e27;
+            box-shadow: 0 0 20px rgba(74, 158, 255, 0.3);
+            transform: translateY(-3px);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            color: #5a7a9f;
+            padding: 30px;
+            border-top: 2px solid #2a4a7a;
+            margin-top: 50px;
+            font-size: 0.95em;
+            line-height: 1.8;
+        }
+
+        /* Info Box */
+        .info-box {
+            background-color: #1a3a5a;
+            border-left: 4px solid #4a9eff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            color: #7ab8ff;
+        }
+
+        .info-box strong {
+            color: #4a9eff;
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.05em;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .councils-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-direction: column-reverse;
+            }
+
+            .timeline::before {
+                display: none;
+            }
+
+            .timeline-item {
+                flex-direction: column;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background-color: white;
+                color: #333;
+            }
+
+            .tab-btn, .button-group {
+                display: none;
+            }
+
+            .metric-card, .council-card, .timeline-item {
+                page-break-inside: avoid;
+                border: 1px solid #ddd;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🏢 لوحة تحكم إعادة هيكلة اللجان</h1>
+            <p>أكاديمية السلطان قابوس الجوية</p>
+            <p class="subtitle">مايو 2026 | المقترح البديل</p>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab(event, 'overview')">📊 النظرة العامة</button>
+            <button class="tab-btn" onclick="switchTab(event, 'overlaps')">🔄 التضارب والتداخل</button>
+            <button class="tab-btn" onclick="switchTab(event, 'comparison')">⚖️ المقارنة</button>
+            <button class="tab-btn" onclick="switchTab(event, 'councils')">🏛️ توزيع اللجان</button>
+            <button class="tab-btn" onclick="switchTab(event, 'timeline')">📅 خارطة الطريق</button>
+            <button class="tab-btn" onclick="switchTab(event, 'details')">📋 التفاصيل</button>
+        </div>
+
+        <!-- TAB 1: Overview -->
+        <div id="overview" class="tab-content active">
+            <div class="highlight">
+                ✨ المقترح البديل: الإبقاء على المجالس الخمسة مع تخفيض اللجان من 20 إلى 8 لجان (تخفيض 60%)
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">المجالس الحاكمة</div>
+                    <div class="metric-value">5</div>
+                    <div class="metric-change">📊 دون تعديل</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">اللجان الحالية</div>
+                    <div class="metric-value">20</div>
+                    <div class="metric-change">🔴 الوضع الحالي</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">اللجان المقترحة</div>
+                    <div class="metric-value">8</div>
+                    <div class="metric-change">✅ الهدف الجديد</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">نسبة التخفيض</div>
+                    <div class="metric-value">60%</div>
+                    <div class="metric-change">⬇️ تحسن كبير</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">إجمالي الكيانات</div>
+                    <div class="metric-value">25→13</div>
+                    <div class="metric-change">تخفيض 48%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">مدة التطبيق</div>
+                    <div class="metric-value">4</div>
+                    <div class="metric-change">⏱️ أشهر سريعة</div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <strong>🎯 الفوائد الرئيسية:</strong>
+                ✅ استقرار تنظيمي - لا تعديل على هيكل المجالس الرئيسية<br>
+                ✅ سرعة التطبيق - 4 أشهر بدلاً من 6 أشهر<br>
+                ✅ مقاومة أقل - عدم المساس بصلاحيات القيادة العليا<br>
+                ✅ وضوح كامل في المسؤوليات<br>
+                ✅ تخفيض 50% من اجتماعات اللجان السنوية
+            </div>
+        </div>
+
+        <!-- TAB 2: Overlaps & Conflicts -->
+        <div id="overlaps" class="tab-content">
+            <div class="highlight">
+                🔄 مناطق التضارب والتداخل: الوضع الحالي vs المقترح
+            </div>
+
+            <div style="margin-bottom: 40px;">
+                <h3 style="color: #4a9eff; font-size: 1.4em; margin-bottom: 20px; text-align: center;">
+                    📊 الوضع الحالي: 9 مناطق تداخل (20 لجنة متشابكة)
+                </h3>
+                
+                <!-- Current State Visualization -->
+                <svg viewBox="0 0 1100 700" xmlns="http://www.w3.org/2000/svg" style="width: 100%; background-color: #0a0e27; border-radius: 12px; border: 2px solid #2a4a7a;">
+                    <!-- Title -->
+                    <text x="550" y="30" font-size="20" font-weight="bold" fill="#4a9eff" text-anchor="middle" font-family="Arial">
+                        مناطق التضارب الحالية (الفوضى التشغيلية)
+                    </text>
+
+                    <!-- Overlap Area 1: Quality -->
+                    <g>
+                        <circle cx="200" cy="150" r="80" fill="rgba(255, 107, 107, 0.2)" stroke="#ff6b6b" stroke-width="2"/>
+                        <circle cx="280" cy="150" r="80" fill="rgba(255, 107, 107, 0.2)" stroke="#ff6b6b" stroke-width="2"/>
+                        <circle cx="240" cy="100" r="80" fill="rgba(255, 107, 107, 0.2)" stroke="#ff6b6b" stroke-width="2"/>
+                        <circle cx="170" cy="220" r="80" fill="rgba(255, 107, 107, 0.2)" stroke="#ff6b6b" stroke-width="2"/>
+                        <circle cx="310" cy="220" r="80" fill="rgba(255, 107, 107, 0.2)" stroke="#ff6b6b" stroke-width="2"/>
+                        
+                        <text x="240" y="160" font-size="12" fill="#ff6b6b" text-anchor="middle" font-weight="bold" font-family="Arial">الجودة</text>
+                        <text x="240" y="310" font-size="11" fill="#ff6b6b" text-anchor="middle" font-family="Arial">5 لجان متداخلة</text>
+                    </g>
+
+                    <!-- Overlap Area 2: Audit -->
+                    <g>
+                        <circle cx="500" cy="150" r="75" fill="rgba(255, 165, 0, 0.2)" stroke="#ffa500" stroke-width="2"/>
+                        <circle cx="570" cy="150" r="75" fill="rgba(255, 165, 0, 0.2)" stroke="#ffa500" stroke-width="2"/>
+                        
+                        <text x="535" y="160" font-size="12" fill="#ffa500" text-anchor="middle" font-weight="bold" font-family="Arial">التدقيق</text>
+                        <text x="535" y="280" font-size="11" fill="#ffa500" text-anchor="middle" font-family="Arial">2 لجنة متداخلة</text>
+                    </g>
+
+                    <!-- Overlap Area 3: Clubs -->
+                    <g>
+                        <circle cx="800" cy="150" r="70" fill="rgba(100, 200, 255, 0.2)" stroke="#64c8ff" stroke-width="2"/>
+                        <circle cx="860" cy="150" r="70" fill="rgba(100, 200, 255, 0.2)" stroke="#64c8ff" stroke-width="2"/>
+                        <circle cx="830" cy="100" r="70" fill="rgba(100, 200, 255, 0.2)" stroke="#64c8ff" stroke-width="2"/>
+                        
+                        <text x="830" y="160" font-size="12" fill="#64c8ff" text-anchor="middle" font-weight="bold" font-family="Arial">الأندية</text>
+                        <text x="830" y="270" font-size="11" fill="#64c8ff" text-anchor="middle" font-family="Arial">3 لجان متداخلة</text>
+                    </g>
+
+                    <!-- Overlap Area 4: Security -->
+                    <g>
+                        <circle cx="200" cy="450" r="70" fill="rgba(255, 195, 0, 0.2)" stroke="#ffc300" stroke-width="2"/>
+                        <circle cx="260" cy="450" r="70" fill="rgba(255, 195, 0, 0.2)" stroke="#ffc300" stroke-width="2"/>
+                        <circle cx="230" cy="400" r="70" fill="rgba(255, 195, 0, 0.2)" stroke="#ffc300" stroke-width="2"/>
+                        
+                        <text x="230" y="460" font-size="12" fill="#ffc300" text-anchor="middle" font-weight="bold" font-family="Arial">الأمن</text>
+                        <text x="230" y="580" font-size="11" fill="#ffc300" text-anchor="middle" font-family="Arial">3 لجان متداخلة</text>
+                    </g>
+
+                    <!-- Overlap Area 5: Culture -->
+                    <g>
+                        <circle cx="500" cy="450" r="70" fill="rgba(147, 112, 219, 0.2)" stroke="#9370db" stroke-width="2"/>
+                        <circle cx="560" cy="450" r="70" fill="rgba(147, 112, 219, 0.2)" stroke="#9370db" stroke-width="2"/>
+                        <circle cx="530" cy="400" r="70" fill="rgba(147, 112, 219, 0.2)" stroke="#9370db" stroke-width="2"/>
+                        
+                        <text x="530" y="460" font-size="12" fill="#9370db" text-anchor="middle" font-weight="bold" font-family="Arial">الثقافة</text>
+                        <text x="530" y="580" font-size="11" fill="#9370db" text-anchor="middle" font-family="Arial">3 لجان متداخلة</text>
+                    </g>
+
+                    <!-- Overlap Area 6: Discipline -->
+                    <g>
+                        <circle cx="800" cy="450" r="65" fill="rgba(0, 212, 170, 0.2)" stroke="#00d4aa" stroke-width="2"/>
+                        <circle cx="855" cy="450" r="65" fill="rgba(0, 212, 170, 0.2)" stroke="#00d4aa" stroke-width="2"/>
+                        
+                        <text x="827" y="460" font-size="12" fill="#00d4aa" text-anchor="middle" font-weight="bold" font-family="Arial">الانضباط</text>
+                        <text x="827" y="575" font-size="11" fill="#00d4aa" text-anchor="middle" font-family="Arial">2 لجنة متداخلة</text>
+                    </g>
+
+                    <!-- Summary Box -->
+                    <rect x="50" y="650" width="1000" height="30" fill="#1a2555" stroke="#ff6b6b" stroke-width="2" rx="6"/>
+                    <text x="550" y="670" font-size="12" fill="#ff6b6b" text-anchor="middle" font-weight="bold" font-family="Arial">
+                        ❌ النتيجة: طلبات مكررة • قادة مرهقون • عدم وضوح المسؤوليات • اجتماعات متعددة • تأخر في القرارات
+                    </text>
+                </svg>
+            </div>
+
+            <div style="margin: 30px 0; border-top: 2px solid #2a4a7a; border-bottom: 2px solid #2a4a7a; padding: 20px 0;">
+                <h3 style="color: #4a9eff; font-size: 1.4em; margin-bottom: 20px; text-align: center;">
+                    ✅ الوضع المقترح: 8 لجان واضحة منفصلة
+                </h3>
+
+                <!-- Proposed State Visualization -->
+                <svg viewBox="0 0 1100 650" xmlns="http://www.w3.org/2000/svg" style="width: 100%; background-color: #0a0e27; border-radius: 12px; border: 2px solid #2a4a7a;">
+                    <!-- Title -->
+                    <text x="550" y="30" font-size="20" font-weight="bold" fill="#00d4aa" text-anchor="middle" font-family="Arial">
+                        8 لجان واضحة منفصلة (الوضوح الكامل)
+                    </text>
+
+                    <!-- Committee Boxes - Row 1 -->
+                    <!-- Box 1 -->
+                    <rect x="30" y="70" width="130" height="100" fill="#1a3a5a" stroke="#00d4aa" stroke-width="2" rx="8"/>
+                    <text x="95" y="95" font-size="12" fill="#00d4aa" text-anchor="middle" font-weight="bold" font-family="Arial">الحوكمة</text>
+                    <text x="95" y="115" font-size="11" fill="#7ab8ff" text-anchor="middle" font-family="Arial">والجودة</text>
+                    <text x="95" y="160" font-size="10" fill="#5a7a9f" text-anchor="middle" font-family="Arial">1 لجنة</text>
+
+                    <!-- Box 2 -->
+                    <rect x="185" y="70" width="130" height="100" fill="#1a3a5a" stroke="#00d4aa" stroke-width="2" rx="8"/>
+                    <text x="250" y="100" font-size="12" fill="#00d4aa" text-anchor="middle" font-weight="bold" font-family="Arial">التدقيق</text>
+                    <text x="250" y="120" font-size="11" fill="#7ab8ff" text-anchor="middle" font-family="Arial">المالي</text>
+                    <text x="250" y="160" font-size="10" fill="#5a7a9f" text-anchor="middle" font-family="Arial">1 لجنة</text>
+
+                    <!-- Box 3 -->
+                    <rect x="340" y="70" width="130" height="100" fill="#1a3a5a" stroke="#00d4aa" stroke-width="2" rx="8"/>
+                    <text x="405" y="100" font-size="12" fill="#00d4aa" text-anchor="middle" font-weight="bold" font-family="Arial">الأمن</text>
+                    <text x="405" y="120" font-size="11" fill="#7ab8ff" text-anchor="middle" font-family="Arial">والسلامة</text>
+                    <text x="405" y="160" font-size="10" fill="#5a7a9f" text-anchor="middle" font-family="Arial">1 لجنة</text>
+
+                    <!-- Box 4 -->
+                    <rect x="495" y="70" width="130" height="100" fill="#1a3a5a" stroke="#00d4aa" stroke-width="2" rx="8"/>
+                    <text x="560" y="95" font-size="12" fill="#00d4aa" text-anchor="middle" font-weight="bold" font-family="Arial">الأندية</text>
+                    <text x="560" y="115" font-size="11" fill="#7ab8ff" text-anchor="middle" font-family="Arial">والرفاهية</text>
+                    <text x="560" y="160" font-size="10" fill="#5a7a9f" text-anchor="middle" font-family="Arial">1 لجنة</text>
+
+                    <!-- Box 5 -->
+                    <rect x="650" y="70" width="130" height="100" fill="#1a3a5a" stroke="#00d4aa" stroke-width="2" rx="8"/>
+                    <text x="715" y="95" font-size="12" fill="#00d4aa" text-anchor="middle" font-weight="bold" font-family="Arial">الانضباط</text>
+                    <text x="715" y="115" font-size="11" fill="#7ab8ff" text-anchor="middle" font-family="Arial">والمراسم</text>
+                    <text x="715" y="160" font-size="10" fill="#5a7a9f" text-anchor="middle" font-family="Arial">1 لجنة</text>
+
+                    <!-- Box 6 -->
+                    <rect x="805" y="70" width="130" height="100" fill="#1a3a5a" stroke="#00d4aa" stroke-width="2" rx="8"/>
+                    <text x="870" y="95" font-size="12" fill="#00d4aa" text-anchor="middle" font-weight="bold" font-family="Arial">الأنشطة</text>
+                    <text x="870" y="115" font-size="11" fill="#7ab8ff" text-anchor="middle" font-family="Arial">الرياضية</text>
+                    <text x="870" y="160" font-size="10" fill="#5a7a9f" text-anchor="middle" font-family="Arial">1 لجنة</text>
+
+                    <!-- Row 2 -->
+                    <!-- Box 7 -->
+                    <rect x="265" y="220" width="130" height="100" fill="#1a3a5a" stroke="#00d4aa" stroke-width="2" rx="8"/>
+                    <text x="330" y="250" font-size="12" fill="#00d4aa" text-anchor="middle" font-weight="bold" font-family="Arial">الثقافة</text>
+                    <text x="330" y="270" font-size="11" fill="#7ab8ff" text-anchor="middle" font-family="Arial">والإبداع</text>
+                    <text x="330" y="310" font-size="10" fill="#5a7a9f" text-anchor="middle" font-family="Arial">1 لجنة</text>
+
+                    <!-- Box 8 -->
+                    <rect x="575" y="220" width="130" height="100" fill="#1a3a5a" stroke="#00d4aa" stroke-width="2" rx="8"/>
+                    <text x="640" y="250" font-size="12" fill="#00d4aa" text-anchor="middle" font-weight="bold" font-family="Arial">الكادر</text>
+                    <text x="640" y="270" font-size="11" fill="#7ab8ff" text-anchor="middle" font-family="Arial">النسائي</text>
+                    <text x="640" y="310" font-size="10" fill="#5a7a9f" text-anchor="middle" font-family="Arial">1 لجنة</text>
+
+                    <!-- Success Box -->
+                    <rect x="50" y="400" width="1000" height="200" fill="rgba(0, 212, 170, 0.1)" stroke="#00d4aa" stroke-width="2" rx="8"/>
+                    
+                    <text x="550" y="430" font-size="14" fill="#00d4aa" text-anchor="middle" font-weight="bold" font-family="Arial">
+                        ✅ المزايا الجديدة:
+                    </text>
+
+                    <text x="80" y="465" font-size="12" fill="#7ab8ff" font-family="Arial">
+                        ✓ وضوح كامل في المسؤوليات - كل لجنة متخصصة
+                    </text>
+                    <text x="80" y="495" font-size="12" fill="#7ab8ff" font-family="Arial">
+                        ✓ قادة أقل إرهاقاً - اجتماعات أقل من 80 إلى 30
+                    </text>
+                    <text x="80" y="525" font-size="12" fill="#7ab8ff" font-family="Arial">
+                        ✓ طلبات موحدة - لا تكرار في الطلبات
+                    </text>
+                    <text x="80" y="555" font-size="12" fill="#7ab8ff" font-family="Arial">
+                        ✓ قرارات أسرع - 30% أسرع في اتخاذ القرارات
+                    </text>
+                    <text x="80" y="585" font-size="12" fill="#7ab8ff" font-family="Arial">
+                        ✓ كفاءة تشغيلية - توفير الوقت والموارد
+                    </text>
+                </svg>
+            </div>
+
+            <!-- Detailed Overlap Table -->
+            <div style="margin-top: 40px;">
+                <h3 style="color: #4a9eff; font-size: 1.3em; margin-bottom: 20px;">
+                    📋 جدول التضارب والتداخل التفصيلي
+                </h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>منطقة التداخل</th>
+                            <th>اللجان المتداخلة (حالياً)</th>
+                            <th>مشكلة التداخل</th>
+                            <th>الحل المقترح</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong style="color: #4a9eff;">الجودة والاعتماد</strong></td>
+                            <td class="current">5 لجان</td>
+                            <td>خمس جهات تطلب نفس البيانات من جهات واحدة</td>
+                            <td class="proposed">لجنة واحدة موحدة</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: #4a9eff;">التدقيق والمراجعة</strong></td>
+                            <td class="current">2 لجنة</td>
+                            <td>تداخل في المراجعة المالية والإدارية</td>
+                            <td class="proposed">لجنة واحدة للتدقيق المالي</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: #4a9eff;">الأندية والإعاشة</strong></td>
+                            <td class="current">3 لجان</td>
+                            <td>إدارة متطابقة في 3 أماكن منفصلة</td>
+                            <td class="proposed">لجنة واحدة للأندية والرفاهية</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: #4a9eff;">الأمن والسلامة</strong></td>
+                            <td class="current">3 لجان</td>
+                            <td>موضوعات متقاربة (سلامة أشخاص ومركبات)</td>
+                            <td class="proposed">لجنة واحدة موحدة</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: #4a9eff;">الثقافة والإبداع</strong></td>
+                            <td class="current">3 لجان</td>
+                            <td>محتوى متداخل والوثائق نصت على المواءمة</td>
+                            <td class="proposed">لجنة واحدة للثقافة والإبداع</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: #4a9eff;">الانضباط والمراسم</strong></td>
+                            <td class="current">2 لجنة</td>
+                            <td>كلاهما مرتبطة بالظهور العام والانضباط</td>
+                            <td class="proposed">لجنة واحدة موحدة</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: #4a9eff;">الرياضة والأنشطة</strong></td>
+                            <td class="current">2 لجنة</td>
+                            <td>الرماية جزء من الأنشطة الرياضية</td>
+                            <td class="proposed">لجنة واحدة للأنشطة</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="info-box" style="margin-top: 30px; background-color: #1a3a5a; border-left: 4px solid #00d4aa;">
+                <strong style="color: #00d4aa; display: block; margin-bottom: 10px; font-size: 1.05em;">📊 إحصائيات التحسن:</strong>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                    <div style="background-color: #0f1535; padding: 12px; border-radius: 6px; border-right: 3px solid #4a9eff;">
+                        <div style="color: #7ab8ff; font-weight: 600; margin-bottom: 8px;">أماكن التداخل</div>
+                        <div style="color: #ff6b6b; font-size: 1.8em; font-weight: bold;">9</div>
+                        <div style="color: #5a7a9f; font-size: 0.9em; margin-top: 5px;">الآن → صفر بعد التطبيق</div>
+                    </div>
+                    <div style="background-color: #0f1535; padding: 12px; border-radius: 6px; border-right: 3px solid #4a9eff;">
+                        <div style="color: #7ab8ff; font-weight: 600; margin-bottom: 8px;">لجان متداخلة</div>
+                        <div style="color: #ff6b6b; font-size: 1.8em; font-weight: bold;">20</div>
+                        <div style="color: #5a7a9f; font-size: 0.9em; margin-top: 5px;">→ 8 لجان واضحة</div>
+                    </div>
+                    <div style="background-color: #0f1535; padding: 12px; border-radius: 6px; border-right: 3px solid #4a9eff;">
+                        <div style="color: #7ab8ff; font-weight: 600; margin-bottom: 8px;">تكرار الطلبات</div>
+                        <div style="color: #00d4aa; font-size: 1.8em; font-weight: bold;">60%</div>
+                        <div style="color: #5a7a9f; font-size: 0.9em; margin-top: 5px;">تقليل في الطلبات المكررة</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="comparison" class="tab-content">
+            <div class="highlight">
+                📊 مقارنة تفصيلية بين الوضع الحالي والمقترح
+            </div>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>المجال</th>
+                        <th>الوضع الحالي</th>
+                        <th>الوضع المقترح</th>
+                        <th>التحسن</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>المجالس الحاكمة</td>
+                        <td class="current">5 مجالس</td>
+                        <td class="proposed">5 مجالس</td>
+                        <td class="improvement">مستقر ✓</td>
+                    </tr>
+                    <tr>
+                        <td>اللجان التشغيلية</td>
+                        <td class="current">20 لجنة</td>
+                        <td class="proposed">8 لجان</td>
+                        <td class="improvement">تخفيض 60% ✓</td>
+                    </tr>
+                    <tr>
+                        <td>إجمالي الكيانات</td>
+                        <td class="current">25 كيانًا</td>
+                        <td class="proposed">13 كيانًا</td>
+                        <td class="improvement">تخفيض 48% ✓</td>
+                    </tr>
+                    <tr>
+                        <td>لجان الجودة والاعتماد</td>
+                        <td class="current">5 لجان</td>
+                        <td class="proposed">1 لجنة</td>
+                        <td class="improvement">تخفيض 80% ✓</td>
+                    </tr>
+                    <tr>
+                        <td>لجان الأندية</td>
+                        <td class="current">3 لجان</td>
+                        <td class="proposed">2 لجنة</td>
+                        <td class="improvement">تخفيض 33% ✓</td>
+                    </tr>
+                    <tr>
+                        <td>لجان الثقافة والإبداع</td>
+                        <td class="current">3 لجان</td>
+                        <td class="proposed">1 لجنة</td>
+                        <td class="improvement">تخفيض 67% ✓</td>
+                    </tr>
+                    <tr>
+                        <td>لجان الأمن والسلامة</td>
+                        <td class="current">3 لجان</td>
+                        <td class="proposed">1 لجنة</td>
+                        <td class="improvement">تخفيض 67% ✓</td>
+                    </tr>
+                    <tr>
+                        <td>لجان مساعد الإسناد</td>
+                        <td class="current">7 لجان</td>
+                        <td class="proposed">3 لجان</td>
+                        <td class="improvement">تخفيض 57% ✓</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="info-box">
+                <strong>📈 الإحصائيات المتوقعة بعد التطبيق:</strong>
+                • تخفيض اجتماعات اللجان السنوية من 80 إلى 30 اجتماعًا (62.5%)<br>
+                • توفير 50% من ساعات القيادة المخصصة<br>
+                • توحيد طلبات الجودة في طلب واحد بدلاً من خمس طلبات<br>
+                • تقليل وقت اتخاذ القرارات بنسبة 30%
+            </div>
+        </div>
+
+        <!-- TAB 3: Councils Distribution -->
+        <div id="councils" class="tab-content">
+            <div class="highlight">
+                🏛️ توزيع اللجان الثماني على المجالس الخمسة
+            </div>
+
+            <div class="councils-grid">
+                <div class="council-card">
+                    <div class="council-card-header">
+                        <h3 class="council-title">🏛️ مجلس إدارة الأكاديمية</h3>
+                    </div>
+                    <div class="council-card-body">
+                        <div class="council-committees">
+                            <div class="committee-item">✓ الحوكمة والجودة والاعتماد</div>
+                            <div style="color: #5a7a9f; margin-top: 12px; font-size: 0.85em; line-height: 1.6;">
+                                <strong>المنطق:</strong> ترفع تقاريرها مباشرة لضمان الاستقلالية وفق معايير الحوكمة الدولية
+                            </div>
+                            <div style="color: #7ab8ff; margin-top: 10px; font-weight: 600; font-size: 0.9em;">
+                                📊 1 لجنة
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="council-card">
+                    <div class="council-card-header">
+                        <h3 class="council-title">📋 مجلس الأكاديمية</h3>
+                    </div>
+                    <div class="council-card-body">
+                        <div class="council-committees">
+                            <div style="color: #7ab8ff; font-style: italic; font-weight: 600;">
+                                مجلس تنسيقي - بدون لجان مباشرة
+                            </div>
+                            <div style="color: #5a7a9f; margin-top: 12px; font-size: 0.85em; line-height: 1.6;">
+                                <strong>الدور:</strong> يستقبل تقارير اللجان من المجالس الثلاثة الأخرى
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="council-card">
+                    <div class="council-card-header">
+                        <h3 class="council-title">💼 المجلس الإداري والمالي</h3>
+                    </div>
+                    <div class="council-card-body">
+                        <div class="council-committees">
+                            <div class="committee-item">✓ التدقيق المالي والمشتريات</div>
+                            <div class="committee-item">✓ الأمن والسلامة</div>
+                            <div class="committee-item">✓ الأندية والرفاهية</div>
+                            <div style="color: #5a7a9f; margin-top: 12px; font-size: 0.85em;">
+                                <strong>المنطق:</strong> لجان داعمة للتشغيل الإداري والمالي
+                            </div>
+                            <div style="color: #7ab8ff; margin-top: 10px; font-weight: 600; font-size: 0.9em;">
+                                📊 3 لجان
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="council-card">
+                    <div class="council-card-header">
+                        <h3 class="council-title">✈️ مجلس التدريب</h3>
+                    </div>
+                    <div class="council-card-body">
+                        <div class="council-committees">
+                            <div class="committee-item">✓ الانضباط والمراسم</div>
+                            <div class="committee-item">✓ الأنشطة الرياضية ونادي الضباط</div>
+                            <div style="color: #5a7a9f; margin-top: 12px; font-size: 0.85em;">
+                                <strong>المنطق:</strong> أنشطة عسكرية ميدانية لتكوين الضباط
+                            </div>
+                            <div style="color: #7ab8ff; margin-top: 10px; font-weight: 600; font-size: 0.9em;">
+                                📊 2 لجنة
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="council-card">
+                    <div class="council-card-header">
+                        <h3 class="council-title">🎓 مجلس الشؤون الأكاديمية</h3>
+                    </div>
+                    <div class="council-card-body">
+                        <div class="council-committees">
+                            <div class="committee-item">✓ الثقافة والإبداع والإعلام</div>
+                            <div class="committee-item">✓ الكادر النسائي</div>
+                            <div style="color: #5a7a9f; margin-top: 12px; font-size: 0.85em;">
+                                <strong>المنطق:</strong> جزء من البيئة الأكاديمية والتطوير
+                            </div>
+                            <div style="color: #7ab8ff; margin-top: 10px; font-weight: 600; font-size: 0.9em;">
+                                📊 2 لجنة
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="highlight" style="text-align: center; margin-top: 30px;">
+                📊 الإجمالي: 5 مجالس + 8 لجان تشغيلية
+            </div>
+        </div>
+
+        <!-- TAB 4: Timeline -->
+        <div id="timeline" class="tab-content">
+            <div class="highlight">
+                📅 خارطة طريق التطبيق (4 أشهر فقط)
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-marker">3️⃣</div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">المرحلة الثالثة: التشغيل الكامل</div>
+                        <div class="timeline-description">الشهر الرابع - الانعقاد الفعلي والتقارير الموحدة</div>
+                        <div class="timeline-outputs">
+                            📌 انعقاد اللجان وفق الوتيرة الجديدة<br>
+                            📌 إصدار التقارير الأولى الموحدة<br>
+                            📌 تطبيق منظومة مؤشرات الأداء<br>
+                            📌 إعداد تقرير المراجعة الأولى
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-marker">2️⃣</div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">المرحلة الثانية: النقل والدمج</div>
+                        <div class="timeline-description">الشهران الثاني والثالث - تحويل اللجان القديمة</div>
+                        <div class="timeline-outputs">
+                            📌 اجتماعات تأسيسية للجان الثماني<br>
+                            📌 نقل الأرشيف والوثائق<br>
+                            📌 إصدار اللوائح الداخلية<br>
+                            📌 إلغاء رسمي للجان السابقة
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-marker">1️⃣</div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">المرحلة الأولى: الاعتماد والإطلاق</div>
+                        <div class="timeline-description">الشهر الأول - الموافقة والإعدادات الأساسية</div>
+                        <div class="timeline-outputs">
+                            📌 اعتماد مجلس الإدارة للنموذج<br>
+                            📌 إصدار الأوامر الإدارية<br>
+                            📌 تعيين رؤساء اللجان الثماني<br>
+                            📌 تعيين مسؤول أرشفة موحد
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <strong>⚠️ عوامل النجاح الحرجة:</strong>
+                💪 الدعم الكامل من قائد القاعدة والقيادة العليا<br>
+                📢 تواصل واضح مع جميع الأقسام<br>
+                🎯 التزام رؤساء اللجان بالحضور الفعلي<br>
+                💾 بناء نظام إلكتروني موحد للتوثيق<br>
+                📚 تدريب أعضاء اللجان على الحوكمة الرشيدة<br>
+                🔍 مراقبة دقيقة في الشهرين الأولين
+            </div>
+        </div>
+
+        <!-- TAB 5: Details -->
+        <div id="details" class="tab-content">
+            <div class="highlight">
+                📋 اللجان الثماني الجديدة - المهام والاختصاصات
+            </div>
+
+            <div class="councils-grid">
+                <div class="council-card">
+                    <div class="council-card-header">
+                        <h3 class="council-title">1️⃣ الحوكمة والجودة</h3>
+                    </div>
+                    <div class="council-card-body">
+                        <div class="council-committees" style="font-size: 0.9em;">
+                            <strong style="color: #4a9eff; display: block; margin-bottom: 10px;">الرئيس: ضابط ضمان الجودة</strong>
+                            • إدارة منظومة الجودة الداخلية<br>
+                            • الاعتماد المؤسسي والأكاديمي<br>
+                            • إدارة المخاطر<br>
+                            • الاستعداد للتفتيشات الخارجية
+                        </div>
+                    </div>
+                </div>
+
+                <div class="council-card">
+                    <div class="council-card-header">
+                        <h3 class="council-title">2️⃣ التدقيق المالي</h3>
+                    </div>
+                    <div class="council-card-body">
+                        <div class="council-committees" style="font-size: 0.9em;">
+                            <strong style="color: #4a9eff; display: block; margin-bottom: 10px;">الرئيس: مدير من ركن المحاسبة</strong>
+                            • التدقيق على الموازنة والنفقات<br>
+                            • الجرد السنوي والمفاجئ<br>
+                            • فتح وفرز العروض<br>
+                            • مراجعة التقارير الدورية
+                        </div>
+                    </div>
+                </div>
+
+                <div class="council-card">
+                    <div class="council-card-header">
+                        <h3 class="council-title">3️⃣ الأمن والسلامة</h3>
+                    </div>
+                    <div class="council-card-body">
+                        <div class="council-committees" style="font-size: 0.9em;">
+                            <strong style="color: #4a9eff; display: block; margin-bottom: 10px;">الرئيس: قائد سرب الأمن والإطفاء</strong>
+                            • برامج التوعية الأمنية<br>
+                            • معايير السلامة المهنية<br>
+                            • التثقيف المروري<br>
+                            • تقارير الحوادث والإصابات
+                        </div>
+                    </div>
+                </div>
+
+                <div class="council-card">
+                    <div class="council-card-header">
+                        <h3 class="council-title">4️⃣ الأندية والرفاهية</h3>
+                    </div>
+                    <div class="council-card-body">
+                        <div class="council-committees" style="font-size: 0.9em;">
+                            <strong style="color: #4a9eff; display: block; margin-bottom: 10px;">الرئيس: قائد جناح الإدارة</strong>
+                            • إدارة نادي كبار الضباط<br>
+                            • رفاهية الجنود<br>
+                            • فريق الرماية<br>
+                            • تطوير خدمات الأندية
+                        </div>
+                    </div>
+                </div>
+
+                <div class="council-card">
+                    <div class="council-card-header">
+                        <h3 class="council-title">5️⃣ الانضباط والمراسم</h3>
+                    </div>
+                    <div class="council-card-body">
+                        <div class="council-committees" style="font-size: 0.9em;">
+                            <strong style="color: #4a9eff; display: block; margin-bottom: 10px;">الرئيس: قائد جناح التدريب</strong>
+                            • الطابور الصباحي<br>
+                            • رصد الظواهر الانضباطية<br>
+                            • التخريجات والمناسبات<br>
+                            • تنسيق الاحتفالات الرسمية
+                        </div>
+                    </div>
+                </div>
+
+                <div class="council-card">
+                    <div class="council-card-header">
+                        <h3 class="council-title">6️⃣ الأنشطة الرياضية</h3>
+                    </div>
+                    <div class="council-card-body">
+                        <div class="council-committees" style="font-size: 0.9em;">
+                            <strong style="color: #4a9eff; display: block; margin-bottom: 10px;">الرئيس: ضابط من جناح التدريب</strong>
+                            • الحصص الأسبوعية للضباط<br>
+                            • المسابقات الرياضية<br>
+                            • إدارة نادي الضباط<br>
+                            • المرافق الرياضية والترفيهية
+                        </div>
+                    </div>
+                </div>
+
+                <div class="council-card">
+                    <div class="council-card-header">
+                        <h3 class="council-title">7️⃣ الثقافة والإبداع</h3>
+                    </div>
+                    <div class="council-card-body">
+                        <div class="council-committees" style="font-size: 0.9em;">
+                            <strong style="color: #4a9eff; display: block; margin-bottom: 10px;">الرئيس: قائد جناح التعليم</strong>
+                            • الأنشطة الثقافية<br>
+                            • دعم الإبداع العلمي<br>
+                            • مجلة نسور عمان<br>
+                            • المحاضرات والتكريمات
+                        </div>
+                    </div>
+                </div>
+
+                <div class="council-card">
+                    <div class="council-card-header">
+                        <h3 class="council-title">8️⃣ الكادر النسائي</h3>
+                    </div>
+                    <div class="council-card-body">
+                        <div class="council-committees" style="font-size: 0.9em;">
+                            <strong style="color: #4a9eff; display: block; margin-bottom: 10px;">الرئيسة: ضابطة متخصصة</strong>
+                            • غرس الانضباط العسكري<br>
+                            • برامج التطوير المهني<br>
+                            • المشاركة في الفعاليات<br>
+                            • الصحة والأنشطة الرياضية
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="button-group">
+            <button class="btn" onclick="window.print()">🖨️ طباعة</button>
+            <button class="btn" onclick="downloadAsText()">⬇️ تحميل نسخة</button>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>📄 وثيقة رسمية | لوحة تحكم تفاعلية</p>
+            <p>قاعدة غلا وأكاديمية السلطان قابوس الجوية</p>
+            <p>الخطة البديلة لإعادة الهيكلة | حقوق محفوظة © 2026</p>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(event, tabName) {
+            // Hide all content
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            // Show selected content
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+
+        function downloadAsText() {
+            alert('⬇️ يمكنك حفظ هذه الصفحة بصيغة PDF من خلال:\nملف > طباعة > حفظ بصيغة PDF\nأو استخدم Ctrl+P (أو Cmd+P على Mac)');
+        }
+
+        // Smooth scroll behavior
+        document.querySelectorAll('.tab-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                button.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            });
+        });
+    </script>
+</body>
+</html>
